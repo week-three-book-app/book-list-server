@@ -12,14 +12,12 @@ const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 app.use(cors());
-
 app.get('/', (req, res) => res.send('Testing 1, 2, 3'));
-
-
 app.get('*', (req, res) => res.redirect(CLIENT_URL));
-app.listenerCount(PORT, () => console.log(`Listening on port: ${PORT}`));
+app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
 
-// PORT=3000;
-// CLIENT_URL=http://localhost:8080;
-
-// DATABASE_URL=postrgres://localhost:5432/booklist
+/*
+PORT=3000;
+CLIENT_URL=http://localhost:8080;
+DATABASE_URL=postrgres://localhost:5432/books_app;
+*/
