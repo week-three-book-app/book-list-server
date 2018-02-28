@@ -1,9 +1,9 @@
 'use strict';
 
-// application dependencies
 const express = require('express');
 const cors = require('cors');
 const pg = require('pg');
+const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -23,11 +23,30 @@ app.get('/api/v1/books', (request, response) => {
     .catch(console.error);
 });
 
+
+app.post('/api/v1/books', bodyParser, (req, res) => {
+  let {title, author, image_url, isbn, description} = req.body;
+  client.query(`
+    INSERT INTO books(title, author, image_url, isbn, description) VALUES ($1, $2, $3, $4, $5);`, [title, author, image_url, isbn, description])
+    .then(() => res.sendStatus(201))
+    .catch(console.error);
+});
+
+
+app.get('/api/v1/books/:book_id', (request, response) => {
+  client.query(`
+  SELECT book_id, title, author, image_url, isbn, description
+  FROM books:
+  `)
+    .then(result => response.send(result.rows))
+    .catch(console.error);
+});
+
 app.get('*', (request, response) => response.redirect(CLIENT_URL));
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
 
 /*
-PORT=3000;
-CLIENT_URL=http://localhost:8080;
-DATABASE_URL=postrgres://localhost:5432/books_app;
+export PORT=3000;
+export CLIENT_URL=http://localhost:8080;
+export DATABASE_URL=postrgres://localhost:5432/books_app;
 */
