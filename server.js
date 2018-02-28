@@ -13,6 +13,7 @@ const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 app.use(cors());
+
 app.get('/api/v1/books', (request, response) => {
   client.query(`
     SELECT book_id, title, author, image_url
