@@ -23,11 +23,20 @@ app.get('/api/v1/books', (request, response) => {
     .catch(console.error);
 });
 
+app.get('/api/v1/books/:book_id', (request, response) => {
+  client.query(`
+  SELECT book_id, title, author, image_url, isbn, description
+  FROM books:
+  `)
+    .then(result => response.send(result.rows))
+    .catch(console.error);
+});
+
 app.get('*', (request, response) => response.redirect(CLIENT_URL));
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
 
 /*
-PORT=3000;
-CLIENT_URL=http://localhost:8080;
-DATABASE_URL=postrgres://localhost:5432/books_app;
+export PORT=3000;
+export CLIENT_URL=http://localhost:8080;
+export DATABASE_URL=postrgres://localhost:5432/books_app;
 */
