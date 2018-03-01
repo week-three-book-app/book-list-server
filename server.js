@@ -10,8 +10,8 @@ const PORT = process.env.PORT;
 const CLIENT_URL = process.env.CLIENT_URL;
 
 const client = new pg.Client(process.env.DATABASE_URL);
-client.connect();
 
+client.connect();
 app.use(cors());
 
 app.get('/api/v1/books', (request, response) => {
@@ -23,7 +23,6 @@ app.get('/api/v1/books', (request, response) => {
     .catch(console.error);
 });
 
-
 app.post('/api/v1/books', bodyParser, (req, res) => {
   let {title, author, image_url, isbn, description} = req.body;
   client.query(`
@@ -32,13 +31,11 @@ app.post('/api/v1/books', bodyParser, (req, res) => {
     .catch(console.error);
 });
 
-
-app.get('/api/v1/books/:book_id', (request, response) => {
+app.get('/api/v1/books/:book_id', (req, res) => {
   client.query(`
-  SELECT book_id, title, author, image_url, isbn, description
-  FROM books:
+  SELECT * FROM books WHERE book_id=${req.params.book_id};
   `)
-    .then(result => response.send(result.rows))
+    .then(result => res.send(result.rows))
     .catch(console.error);
 });
 
