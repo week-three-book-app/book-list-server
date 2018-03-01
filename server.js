@@ -3,7 +3,7 @@
 const express = require('express');
 const cors = require('cors');
 const pg = require('pg');
-const bodyParser = require('body-parser');
+const bodyParser = require('body-parser').urlencoded({extended: true });
 
 const app = express();
 const PORT = process.env.PORT;
@@ -39,6 +39,14 @@ app.get('/api/v1/books/:book_id', (req, res) => {
     .catch(console.error);
 });
 
+app.delete('/api/v1/books/:book_id', (req, res) => {
+  client.query(`
+  DELETE FROM books WHERE book_id=${req.params.book_id};
+  `)
+    .then(() => res.send('Delete Complete'))
+    .catch(console.error);
+});
+
 app.get('*', (request, response) => response.redirect(CLIENT_URL));
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
 
@@ -46,4 +54,5 @@ app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
 export PORT=3000;
 export CLIENT_URL=http://localhost:8080;
 export DATABASE_URL=postrgres://localhost:5432/books_app;
+export TOKEN=4321;
 */
