@@ -33,6 +33,18 @@ app.post('/api/v1/books', bodyParser, (req, res) => {
     .catch(console.error);
 });
 
+app.put('/api/v1/books/:book_id', bodyParser, (req, res) => {
+  console.log(req);
+  let {title, author, image_url, isbn, description} = req.body;
+  client.query(`
+    UPDATE books
+    SET title=$1, author=$2, image_url=$3, isbn=$4 description=$5
+    WHERE book_id=$6`,
+    [title, author, image_url, isbn, description, req.params.book_id])
+    .then(() => res.sendStatus(204))
+    .catch(console.error);
+});
+
 app.get('/api/v1/books/:book_id', (req, res) => {
   client.query(`
   SELECT * FROM books WHERE book_id=${req.params.book_id};
@@ -42,11 +54,8 @@ app.get('/api/v1/books/:book_id', (req, res) => {
 });
 
 app.delete('/api/v1/books/:book_id', (req, res) => {
-  console.log(req);
-  console.log(res);
   client.query(`
-  DELETE FROM books WHERE book_id=${req.params.book_id};
-  `)
+  DELETE FROM books WHERE book_id=$1`, [req.params.book_id])
     .then(() => res.sendStatus(204))
     .catch(console.error);
 });
