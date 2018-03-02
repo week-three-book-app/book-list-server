@@ -12,6 +12,8 @@ const CLIENT_URL = process.env.CLIENT_URL;
 const client = new pg.Client(process.env.DATABASE_URL);
 
 client.connect();
+client.on('error', err => console.error(err));
+
 app.use(cors());
 
 app.get('/api/v1/books', (request, response) => {
@@ -40,10 +42,12 @@ app.get('/api/v1/books/:book_id', (req, res) => {
 });
 
 app.delete('/api/v1/books/:book_id', (req, res) => {
+  console.log(req);
+  console.log(res);
   client.query(`
   DELETE FROM books WHERE book_id=${req.params.book_id};
   `)
-    .then(() => res.send('Delete Complete'))
+    .then(() => res.sendStatus(204))
     .catch(console.error);
 });
 
