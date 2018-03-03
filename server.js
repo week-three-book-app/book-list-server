@@ -34,11 +34,10 @@ app.post('/api/v1/books', bodyParser, (req, res) => {
 });
 
 app.put('/api/v1/books/:book_id', bodyParser, (req, res) => {
-  console.log(req);
   let {title, author, image_url, isbn, description} = req.body;
   client.query(`
     UPDATE books
-    SET title=$1, author=$2, image_url=$3, isbn=$4 description=$5
+    SET title=$1, author=$2, image_url=$3, isbn=$4, description=$5
     WHERE book_id=$6`,
     [title, author, image_url, isbn, description, req.params.book_id])
     .then(() => res.sendStatus(204))
