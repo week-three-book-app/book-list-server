@@ -12,6 +12,8 @@ const CLIENT_URL = process.env.CLIENT_URL;
 const client = new pg.Client(process.env.DATABASE_URL);
 
 client.connect();
+client.on('error', err => console.error(err));
+
 app.use(cors());
 
 app.get('/api/v1/books', (request, response) => {
@@ -31,6 +33,17 @@ app.post('/api/v1/books', bodyParser, (req, res) => {
     .catch(console.error);
 });
 
+app.put('/api/v1/books/:book_id', bodyParser, (req, res) => {
+  let {title, author, image_url, isbn, description} = req.body;
+  client.query(`
+    UPDATE books
+    SET title=$1, author=$2, image_url=$3, isbn=$4, description=$5
+    WHERE book_id=$6`,
+    [title, author, image_url, isbn, description, req.params.book_id])
+    .then(() => res.sendStatus(204))
+    .catch(console.error);
+});
+
 app.get('/api/v1/books/:book_id', (req, res) => {
   client.query(`
   SELECT * FROM books WHERE book_id=${req.params.book_id};
@@ -41,9 +54,8 @@ app.get('/api/v1/books/:book_id', (req, res) => {
 
 app.delete('/api/v1/books/:book_id', (req, res) => {
   client.query(`
-  DELETE FROM books WHERE book_id=${req.params.book_id};
-  `)
-    .then(() => res.send('Delete Complete'))
+  DELETE FROM books WHERE book_id=$1`, [req.params.book_id])
+    .then(() => res.sendStatus(204))
     .catch(console.error);
 });
 
